@@ -11,48 +11,52 @@ import (
 )
 
 func main() {
-
 	// Define command-line flags
-	writeToCSV := flag.Bool("csv", false, "Enable CSV writing")
+	writeToCSV := flag.Bool("csv", true, "Enable CSV writing")
 	writeToBigQuery := flag.Bool("bigquery", false, "Enable BigQuery writing")
 	flag.Parse()
 
 	// Scrape products with a limit of 5 pages
 	pokemonProducts := scrapper.ScrapeProducts(5)
 
-	// Write to CSV if the flag is enabled
-	if *writeToCSV {
+	// Check if any flags are provided
+	if flag.NArg() == 0 {
+		// If no flags are provided, use the default behavior (writing to CSV)
 		scrapper.WriteToCSV(pokemonProducts)
-	}
-
-	// Write to BigQuery if the flag is enabled
-	if *writeToBigQuery {
-
-		err_env := godotenv.Load()
-		if err_env != nil {
-			log.Fatal("Error loading .env file")
+	} else {
+		// Write to CSV if the -csv flag is enabled
+		if *writeToCSV {
+			scrapper.WriteToCSV(pokemonProducts)
 		}
 
-		projectID := os.Getenv("PROJECT_ID")
-		datasetID := os.Getenv("DATASET_ID")
-		tableID := os.Getenv("TABLE_ID")
-		serviceAccountKeyPath := os.Getenv("SERVICE_ACCOUNT_KEY_PATH")
+		// Write to BigQuery if the -bigquery flag is enabled
+		if *writeToBigQuery {
+			errEnv := godotenv.Load()
+			if errEnv != nil {
+				log.Fatal("Error loading .env file")
+			}
 
-		if projectID == "" || datasetID == "" || tableID == "" || serviceAccountKeyPath == "" {
-			log.Fatal("PROJECT_ID, DATASET_ID, and SERVICE_ACCOUNT_KEY_PATH must be set in the .env file")
-		}
-		if serviceAccountKeyPath == "" {
-			log.Fatal("Service account key path is required when using BigQuery")
-		}
+			projectID := os.Getenv("PROJECT_ID")
+			datasetID := os.Getenv("DATASET_ID")
+			tableID := os.Getenv("TABLE_ID")
+			serviceAccountKeyPath := os.Getenv("SERVICE_ACCOUNT_KEY_PATH")
 
-		// Check if the service account key file exists
-		if _, err := os.Stat(serviceAccountKeyPath); os.IsNotExist(err) {
-			log.Fatalf("Service account key file '%s' does not exist", serviceAccountKeyPath)
-		}
+			if projectID == "" || datasetID == "" || tableID == "" || serviceAccountKeyPath == "" {
+				log.Fatal("PROJECT_ID, DATASET_ID, and SERVICE_ACCOUNT_KEY_PATH must be set in the .env file")
+			}
+			if serviceAccountKeyPath == "" {
+				log.Fatal("Service account key path is required when using BigQuery")
+			}
 
-		err := bigquery.WriteToBigQuery(pokemonProducts, projectID, datasetID, tableID, serviceAccountKeyPath)
-		if err != nil {
-			log.Fatalf("Failed to write data to BigQuery: %v", err)
+			// Check if the service account key file exists
+			if _, err := os.Stat(serviceAccountKeyPath); os.IsNotExist(err) {
+				log.Fatalf("Service account key file '%s' does not exist", serviceAccountKeyPath)
+			}
+
+			err := bigquery.WriteToBigQuery(pokemonProducts, projectID, datasetID, tableID, serviceAccountKeyPath)
+			if err != nil {
+				log.Fatalf("Failed to write data to BigQuery: %v", err)
+			}
 		}
 	}
 }
