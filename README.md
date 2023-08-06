@@ -43,6 +43,8 @@ go run main.go -csv -bigquery
 
 - Use the `-csv` flag to enable CSV writing. This will create a CSV file named `products.csv` in the project directory with the scraped data.
 
+- Use the `-postgres` flag to enable Postgres writing. This will upload data into a postgresDB.
+
 - Use the `-bigquery` flag to enable BigQuery writing. Before using this option, make sure to set up the environment variables in the `.env` file with the necessary configuration details for BigQuery.
 
 If no flag is selected it defaults to CSV output
