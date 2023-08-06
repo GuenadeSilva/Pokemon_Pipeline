@@ -1,0 +1,7 @@
+# Secret file
+.env
+# Service Key Account for GCP
+deel_key.json
+
+#Products CSV Output File
+products.csv

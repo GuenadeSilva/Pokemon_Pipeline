@@ -6,13 +6,15 @@ import (
 	"os"
 	"web_scrapper/bigquery"
 	"web_scrapper/scrapper"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
+
 	// Define command-line flags
 	writeToCSV := flag.Bool("csv", false, "Enable CSV writing")
 	writeToBigQuery := flag.Bool("bigquery", false, "Enable BigQuery writing")
-	serviceAccountKeyPath := "deel_key.json"
 	flag.Parse()
 
 	// Scrape products with a limit of 5 pages
@@ -25,6 +27,20 @@ func main() {
 
 	// Write to BigQuery if the flag is enabled
 	if *writeToBigQuery {
+
+		err_env := godotenv.Load()
+		if err_env != nil {
+			log.Fatal("Error loading .env file")
+		}
+
+		projectID := os.Getenv("PROJECT_ID")
+		datasetID := os.Getenv("DATASET_ID")
+		tableID := os.Getenv("TABLE_ID")
+		serviceAccountKeyPath := os.Getenv("SERVICE_ACCOUNT_KEY_PATH")
+
+		if projectID == "" || datasetID == "" || tableID == "" || serviceAccountKeyPath == "" {
+			log.Fatal("PROJECT_ID, DATASET_ID, and SERVICE_ACCOUNT_KEY_PATH must be set in the .env file")
+		}
 		if serviceAccountKeyPath == "" {
 			log.Fatal("Service account key path is required when using BigQuery")
 		}
@@ -34,7 +50,7 @@ func main() {
 			log.Fatalf("Service account key file '%s' does not exist", serviceAccountKeyPath)
 		}
 
-		err := bigquery.WriteToBigQuery(pokemonProducts, "your-project-id", "your-dataset-id", "pokemon_products", serviceAccountKeyPath)
+		err := bigquery.WriteToBigQuery(pokemonProducts, projectID, datasetID, tableID, serviceAccountKeyPath)
 		if err != nil {
 			log.Fatalf("Failed to write data to BigQuery: %v", err)
 		}
