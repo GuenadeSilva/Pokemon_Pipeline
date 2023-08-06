@@ -5,7 +5,7 @@ import (
 )
 
 type PokemonProduct struct {
-	url, image, name, price string
+	URL, IMAGE, NAME, PRICE string
 }
 
 func contains(s []string, str string) bool {
@@ -39,10 +39,10 @@ func ScrapeProducts(limit int) []PokemonProduct {
 
 	c.OnHTML("li.product", func(e *colly.HTMLElement) {
 		pokemonProduct := PokemonProduct{}
-		pokemonProduct.url = e.ChildAttr("a", "href")
-		pokemonProduct.image = e.ChildAttr("img", "src")
-		pokemonProduct.name = e.ChildText("h2")
-		pokemonProduct.price = e.ChildText(".price")
+		pokemonProduct.URL = e.ChildAttr("a", "href")
+		pokemonProduct.IMAGE = e.ChildAttr("img", "src")
+		pokemonProduct.NAME = e.ChildText("h2")
+		pokemonProduct.PRICE = e.ChildText(".price")
 
 		pokemonProducts = append(pokemonProducts, pokemonProduct)
 		if i < limit {
@@ -52,6 +52,6 @@ func ScrapeProducts(limit int) []PokemonProduct {
 		}
 	})
 
-	//c.Visit(pageToScrape)
+	c.Visit(pageToScrape)
 	return pokemonProducts
 }

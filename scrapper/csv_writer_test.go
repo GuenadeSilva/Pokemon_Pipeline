@@ -9,16 +9,16 @@ func TestWriteToCSV(t *testing.T) {
 	// Sample data for testing
 	pokemonProducts := []PokemonProduct{
 		{
-			url:   "https://example.com/pokemon1",
-			image: "https://example.com/images/pokemon1.png",
-			name:  "Pokemon 1",
-			price: "$10",
+			URL:   "https://example.com/pokemon1",
+			IMAGE: "https://example.com/images/pokemon1.png",
+			NAME:  "Pokemon 1",
+			PRICE: "$10",
 		},
 		{
-			url:   "https://example.com/pokemon2",
-			image: "https://example.com/images/pokemon2.png",
-			name:  "Pokemon 2",
-			price: "$15",
+			URL:   "https://example.com/pokemon2",
+			IMAGE: "https://example.com/images/pokemon2.png",
+			NAME:  "Pokemon 2",
+			PRICE: "$15",
 		},
 	}
 

@@ -43,10 +43,10 @@ func WriteToCSV(pokemonProducts []PokemonProduct) {
 
 	for _, pokemonProduct := range pokemonProducts {
 		record := []string{
-			pokemonProduct.url,
-			pokemonProduct.image,
-			pokemonProduct.name,
-			pokemonProduct.price,
+			pokemonProduct.URL,
+			pokemonProduct.IMAGE,
+			pokemonProduct.NAME,
+			pokemonProduct.PRICE,
 		}
 		writer.Write(record)
 	}
