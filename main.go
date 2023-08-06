@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"web_scrapper/bigquery"
+	"web_scrapper/postgres"
 	"web_scrapper/scrapper"
 
 	"github.com/joho/godotenv"
@@ -14,6 +15,7 @@ func main() {
 	// Define command-line flags
 	writeToCSV := flag.Bool("csv", true, "Enable CSV writing")
 	writeToBigQuery := flag.Bool("bigquery", false, "Enable BigQuery writing")
+	writeToPostgres := flag.Bool("postgres", false, "Enable PostgreSQL writing")
 	flag.Parse()
 
 	// Scrape products with a limit of 5 pages
@@ -27,6 +29,13 @@ func main() {
 		// Write to CSV if the -csv flag is enabled
 		if *writeToCSV {
 			scrapper.WriteToCSV(pokemonProducts)
+		}
+		// Write to PostgreSQL if the -postgres flag is enabled
+		if *writeToPostgres {
+			err := postgres.UploadToPostgres(pokemonProducts)
+			if err != nil {
+				log.Fatalf("Failed to write data to PostgreSQL: %v", err)
+			}
 		}
 
 		// Write to BigQuery if the -bigquery flag is enabled
